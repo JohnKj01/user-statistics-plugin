@@ -24,6 +24,8 @@ class CLS_Customer_Login_Stats {
     }
 
     private function __construct() {
+        //activation hook
+        register_activation_hook(__FILE__, [$this, 'activate']);
         // will add hooks in later commits
     }
 }
