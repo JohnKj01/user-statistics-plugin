@@ -1,5 +1,4 @@
-cat > customer-login-stats.php <<'PHP'
-<?php
+cat > customer-login-stats.php <<'PHP' <?php
 /**
  * Plugin Name: Customer Login Stats
  * Description: Tracks WooCommerce customer logins and displays daily statistics (logins + unique customers) to admins.
@@ -26,7 +25,21 @@ class CLS_Customer_Login_Stats {
     private function __construct() {
         //activation hook
         register_activation_hook(__FILE__, [$this, 'activate']);
-        // will add hooks in later commits
+    }
+    public function activate() {
+        global $wpdb;
+        $this->table_name = $wpdb->prefix . 'customer_login_stats';
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $sql = "CREATE TABLE {$this->table_name} (
+            day_date DATE NOT NULL,
+            logins INT UNSIGNED NOT NULL DEFAULT 0,
+            unique_logins INT UNSIGNED NOT NULL DEFAULT 0,
+            PRIMARY KEY (day_date)
+        ) $charset_collate;";
+
+        require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+        dbDelta($sql);
     }
 }
 
