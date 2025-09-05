@@ -86,6 +86,19 @@ class CLS_Customer_Login_Stats {
             )
         );
     }
+    // Register admin menu
+    public function register_admin_page() {
+    $cap = current_user_can('manage_woocommerce') ? 'manage_woocommerce' : 'manage_options';
+    add_menu_page(
+        __('Customer Login Stats', 'customer-login-stats'),
+        __('Customer Login Stats', 'customer-login-stats'),
+        $cap,
+        'customer-login-stats',
+        [$this, 'render_admin_page'],
+        'dashicons-chart-area',
+        58
+    );
+}
 }
 
 
