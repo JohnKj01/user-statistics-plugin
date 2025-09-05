@@ -88,8 +88,8 @@ class CLS_Customer_Login_Stats {
     }
     // Register admin menu
     public function register_admin_page() {
-    $cap = current_user_can('manage_woocommerce') ? 'manage_woocommerce' : 'manage_options';
-    add_menu_page(
+        $cap = current_user_can('manage_woocommerce') ? 'manage_woocommerce' : 'manage_options';
+        add_menu_page(
         __('Customer Login Stats', 'customer-login-stats'),
         __('Customer Login Stats', 'customer-login-stats'),
         $cap,
@@ -97,8 +97,17 @@ class CLS_Customer_Login_Stats {
         [$this, 'render_admin_page'],
         'dashicons-chart-area',
         58
-    );
+        );
+    }
+    // Render admin page
+    public function render_admin_page() {
+    if (!current_user_can('manage_woocommerce') && !current_user_can('manage_options')) {
+        wp_die(__('You do not have sufficient permissions to access this page.', 'customer-login-stats'));
+    }
+    echo '<div class="wrap"><h1>' . esc_html__('Customer Login Stats', 'customer-login-stats') . '</h1>';
+    echo '<p>' . esc_html__('Loading stats...', 'customer-login-stats') . '</p></div>';
 }
+
 }
 
 
