@@ -25,6 +25,8 @@ class CLS_Customer_Login_Stats {
     private function __construct() {
         //activation hook
         register_activation_hook(__FILE__, [$this, 'activate']);
+        add_action('wp_login', [$this, 'handle_login'], 10, 2);
+
     }
     public function activate() {
         global $wpdb;
