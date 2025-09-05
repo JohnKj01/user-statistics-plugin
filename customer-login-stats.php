@@ -104,9 +104,162 @@ class CLS_Customer_Login_Stats {
     if (!current_user_can('manage_woocommerce') && !current_user_can('manage_options')) {
         wp_die(__('You do not have sufficient permissions to access this page.', 'customer-login-stats'));
     }
-    echo '<div class="wrap"><h1>' . esc_html__('Customer Login Stats', 'customer-login-stats') . '</h1>';
-    echo '<p>' . esc_html__('Loading stats...', 'customer-login-stats') . '</p></div>';
+
+    global $wpdb;
+    $this->table_name = $wpdb->prefix . 'customer_login_stats';
+    $today = current_time('Y-m-d');
+
+    // fetch last 30 days
+    $rows = $wpdb->get_results(
+        $wpdb->prepare(
+            "SELECT day_date, logins, unique_logins
+             FROM {$this->table_name}
+             WHERE day_date >= DATE_SUB(%s, INTERVAL 29 DAY)
+             ORDER BY day_date ASC",
+            $today
+        ),
+        ARRAY_A
+    );
+
+    $data_map = [];
+    if (is_array($rows)) {
+        foreach ($rows as $r) {
+            $data_map[$r['day_date']] = [
+                'logins' => (int)$r['logins'],
+                'unique' => (int)$r['unique_logins'],
+            ];
+        }
+    }
+
+    $labels = [];
+    $logins = [];
+    $uniques = [];
+    $total_logins = 0;
+    $total_uniques = 0;
+
+    for ($i = 29; $i >= 0; $i--) {
+        $d = date('Y-m-d', strtotime($today . " -{$i} days"));
+        $labels[] = $d;
+        $l = isset($data_map[$d]) ? $data_map[$d]['logins'] : 0;
+        $u = isset($data_map[$d]) ? $data_map[$d]['unique'] : 0;
+        $logins[] = $l;
+        $uniques[] = $u;
+        $total_logins += $l;
+        $total_uniques += $u;
+    }
+
+    $avg_logins = $total_logins / 30;
+    $avg_uniques = $total_uniques / 30;
+
+    ?> <div class="wrap">
+    <h1><?php esc_html_e('Customer Login Stats', 'customer-login-stats'); ?></h1>
+
+    <div style="display:flex; gap:16px; flex-wrap: wrap; margin: 16px 0;">
+        <div style="flex:1; min-width:240px; background:#fff; border:1px solid #ddd; padding:16px; border-radius:8px;">
+            <h2 style="margin:0 0 8px;"><?php esc_html_e('Last 30 Days', 'customer-login-stats'); ?></h2>
+            <p style="margin:4px 0;"><strong><?php esc_html_e('Total Logins:', 'customer-login-stats'); ?></strong>
+                <?php echo esc_html(number_format_i18n($total_logins)); ?></p>
+            <p style="margin:4px 0;">
+                <strong><?php esc_html_e('Total Unique Customers:', 'customer-login-stats'); ?></strong>
+                <?php echo esc_html(number_format_i18n($total_uniques)); ?></p>
+            <p style="margin:4px 0;"><strong><?php esc_html_e('Avg Logins/Day:', 'customer-login-stats'); ?></strong>
+                <?php echo esc_html(number_format_i18n($avg_logins, 2)); ?></p>
+            <p style="margin:4px 0;"><strong><?php esc_html_e('Avg Unique/Day:', 'customer-login-stats'); ?></strong>
+                <?php echo esc_html(number_format_i18n($avg_uniques, 2)); ?></p>
+        </div>
+        <div style="flex:2; min-width:320px; background:#fff; border:1px solid #ddd; padding:16px; border-radius:8px;">
+            <h2 style="margin-top:0;"><?php esc_html_e('30-Day Trend', 'customer-login-stats'); ?></h2>
+            <canvas id="clsChart" height="120"></canvas>
+        </div>
+    </div>
+
+    <div style="background:#fff; border:1px solid #ddd; padding:16px; border-radius:8px;">
+        <h2 style="margin-top:0;"><?php esc_html_e('Daily Breakdown', 'customer-login-stats'); ?></h2>
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th><?php esc_html_e('Date', 'customer-login-stats'); ?></th>
+                    <th><?php esc_html_e('Logins', 'customer-login-stats'); ?></th>
+                    <th><?php esc_html_e('Unique Customers', 'customer-login-stats'); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    for ($i = 29; $i >= 0; $i--) :
+                        $d = date('Y-m-d', strtotime($today . " -{$i} days"));
+                        $l = isset($data_map[$d]) ? (int)$data_map[$d]['logins'] : 0;
+                        $u = isset($data_map[$d]) ? (int)$data_map[$d]['unique'] : 0;
+                        ?>
+                <tr>
+                    <td><?php echo esc_html($d); ?></td>
+                    <td><?php echo esc_html($l); ?></td>
+                    <td><?php echo esc_html($u); ?></td>
+                </tr>
+                <?php endfor; ?>
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    (function() {
+        const ctx = document.getElementById('clsChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: <?php echo wp_json_encode($labels); ?>,
+                datasets: [{
+                        label: '<?php echo esc_js(__('Logins', 'customer-login-stats')); ?>',
+                        data: <?php echo wp_json_encode($logins); ?>,
+                        tension: 0.3
+                    },
+                    {
+                        label: '<?php echo esc_js(__('Unique Customers', 'customer-login-stats')); ?>',
+                        data: <?php echo wp_json_encode($uniques); ?>,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Count'
+                        },
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                }
+            }
+        });
+    })();
+    </script>
+    <?php
 }
+
 
 }
 
