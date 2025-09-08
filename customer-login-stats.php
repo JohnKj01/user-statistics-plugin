@@ -24,13 +24,15 @@ class CLS_Customer_Login_Stats {
 
     private function __construct() {
         add_action('wp_login', [$this, 'handle_login'], 10, 2);
+        add_action('admin_menu', [$this, 'register_admin_page']);
     }
-    public function activate() {
+
+    public static function activate() {
         global $wpdb;
-        $this->table_name = $wpdb->prefix . 'customer_login_stats';
+        $table_name = $wpdb->prefix . 'customer_login_stats';
         $charset_collate = $wpdb->get_charset_collate();
 
-        $sql = "CREATE TABLE {$this->table_name} (
+        $sql = "CREATE TABLE {$table_name} (
             day_date DATE NOT NULL,
             logins INT UNSIGNED NOT NULL DEFAULT 0,
             unique_logins INT UNSIGNED NOT NULL DEFAULT 0,
