@@ -23,10 +23,7 @@ class CLS_Customer_Login_Stats {
     }
 
     private function __construct() {
-        //activation hook
-        register_activation_hook(__FILE__, [$this, 'activate']);
         add_action('wp_login', [$this, 'handle_login'], 10, 2);
-
     }
     public function activate() {
         global $wpdb;
@@ -161,7 +158,7 @@ class CLS_Customer_Login_Stats {
                 <?php echo esc_html(number_format_i18n($total_logins)); ?></p>
             <p style="margin:4px 0;">
                 <strong><?php esc_html_e('Total Unique Customers:', 'customer-login-stats'); ?></strong>
-                <?php echo esc_html(number_format_i18n($total_uniques)); ?>
+5                <?php echo esc_html(number_format_i18n($total_uniques)); ?>
             </p>
             <p style="margin:4px 0;"><strong><?php esc_html_e('Avg Logins/Day:', 'customer-login-stats'); ?></strong>
                 <?php echo esc_html(number_format_i18n($avg_logins, 2)); ?></p>
@@ -264,6 +261,8 @@ class CLS_Customer_Login_Stats {
 
 }
 
+// Register activation hook in global scope
+register_activation_hook(__FILE__, ['CLS_Customer_Login_Stats', 'instance']);
+add_action('admin_menu', ['CLS_Customer_Login_Stats', 'instance']);
 
 CLS_Customer_Login_Stats::instance();
-PHP
