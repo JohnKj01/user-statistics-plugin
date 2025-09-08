@@ -262,7 +262,7 @@ class CLS_Customer_Login_Stats {
 }
 
 // Register activation hook in global scope
-register_activation_hook(__FILE__, ['CLS_Customer_Login_Stats', 'instance']);
-add_action('admin_menu', ['CLS_Customer_Login_Stats', 'instance']);
+register_activation_hook(__FILE__, ['CLS_Customer_Login_Stats', 'activate']);
 
+// Initialize plugin
 CLS_Customer_Login_Stats::instance();
