@@ -161,7 +161,8 @@ class CLS_Customer_Login_Stats {
                 <?php echo esc_html(number_format_i18n($total_logins)); ?></p>
             <p style="margin:4px 0;">
                 <strong><?php esc_html_e('Total Unique Customers:', 'customer-login-stats'); ?></strong>
-                <?php echo esc_html(number_format_i18n($total_uniques)); ?></p>
+                <?php echo esc_html(number_format_i18n($total_uniques)); ?>
+            </p>
             <p style="margin:4px 0;"><strong><?php esc_html_e('Avg Logins/Day:', 'customer-login-stats'); ?></strong>
                 <?php echo esc_html(number_format_i18n($avg_logins, 2)); ?></p>
             <p style="margin:4px 0;"><strong><?php esc_html_e('Avg Unique/Day:', 'customer-login-stats'); ?></strong>
@@ -199,65 +200,65 @@ class CLS_Customer_Login_Stats {
             </tbody>
         </table>
     </div>
-    </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-    (function() {
-        const ctx = document.getElementById('clsChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: <?php echo wp_json_encode($labels); ?>,
-                datasets: [{
-                        label: '<?php echo esc_js(__('Logins', 'customer-login-stats')); ?>',
-                        data: <?php echo wp_json_encode($logins); ?>,
-                        tension: 0.3
-                    },
-                    {
-                        label: '<?php echo esc_js(__('Unique Customers', 'customer-login-stats')); ?>',
-                        data: <?php echo wp_json_encode($uniques); ?>,
-                        tension: 0.3
-                    }
-                ]
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function() {
+    const ctx = document.getElementById('clsChart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: <?php echo wp_json_encode($labels); ?>,
+            datasets: [{
+                    label: '<?php echo esc_js(__('Logins', 'customer-login-stats')); ?>',
+                    data: <?php echo wp_json_encode($logins); ?>,
+                    tension: 0.3
+                },
+                {
+                    label: '<?php echo esc_js(__('Unique Customers', 'customer-login-stats')); ?>',
+                    data: <?php echo wp_json_encode($uniques); ?>,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
             },
-            options: {
-                responsive: true,
-                interaction: {
-                    mode: 'index',
-                    intersect: false
-                },
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date'
-                        }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Count'
-                        },
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0
-                        }
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
                     }
                 },
-                plugins: {
-                    legend: {
-                        position: 'top'
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Count'
                     },
-                    tooltip: {
-                        enabled: true
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
                     }
                 }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    enabled: true
+                }
             }
-        });
-    })();
-    </script>
-    <?php
+        }
+    });
+})();
+</script>
+<?php
 }
 
 
