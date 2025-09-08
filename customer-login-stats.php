@@ -3,7 +3,7 @@
  * Plugin Name: Customer Login Stats
  * Description: Tracks WooCommerce customer logins and displays daily statistics (logins + unique customers) to admins.
  * Version: 1.0.0
- * Author: Your Name
+ * Author: John Irungu
  * License: GPLv2 or later
  * Text Domain: customer-login-stats
  */
