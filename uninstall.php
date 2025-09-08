@@ -1,4 +1,4 @@
-cat > uninstall.php <<'PHP' <?php
+<?php
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit;
 }

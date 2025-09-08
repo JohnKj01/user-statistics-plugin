@@ -1,4 +1,4 @@
-cat > customer-login-stats.php <<'PHP' <?php
+<?php
 /**
  * Plugin Name: Customer Login Stats
  * Description: Tracks WooCommerce customer logins and displays daily statistics (logins + unique customers) to admins.
