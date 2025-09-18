@@ -188,12 +188,12 @@ class CLS_Customer_Login_Stats {
 
             <div style="background:#fff; border:1px solid #ddd; padding:16px; border-radius:8px;">
                 <h2 style="margin-top:0;"><?php esc_html_e('Daily Breakdown', 'customer-login-stats'); ?></h2>
-                <table class="widefat striped">
+                <table class="widefat striped" style="table-layout:fixed; width:100%;">
                     <thead>
                         <tr>
-                            <th><?php esc_html_e('Date', 'customer-login-stats'); ?></th>
-                            <th><?php esc_html_e('Logins', 'customer-login-stats'); ?></th>
-                            <th><?php esc_html_e('Unique Customers', 'customer-login-stats'); ?></th>
+                            <th style="width:33%;"><?php esc_html_e('Date', 'customer-login-stats'); ?></th>
+                            <th style="width:33%;"><?php esc_html_e('Logins', 'customer-login-stats'); ?></th>
+                            <th style="width:34%;"><?php esc_html_e('Unique Customers', 'customer-login-stats'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -204,9 +204,9 @@ class CLS_Customer_Login_Stats {
                                 $u = isset($data_map[$d]) ? (int)$data_map[$d]['unique'] : 0;
                                 ?>
                         <tr>
-                            <td><?php echo esc_html($d); ?></td>
-                            <td><?php echo esc_html($l); ?></td>
-                            <td><?php echo esc_html($u); ?></td>
+                            <td style="width:33%;"><?php echo esc_html($d); ?></td>
+                            <td style="width:33%;"><?php echo esc_html($l); ?></td>
+                            <td style="width:34%;"><?php echo esc_html($u); ?></td>
                         </tr>
                         <?php endfor; ?>
                     </tbody>
