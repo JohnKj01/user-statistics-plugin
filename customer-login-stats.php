@@ -75,6 +75,15 @@ class CLS_Customer_Login_Stats {
                 $today
             )
         );
+        // Track unique logins for today
+        $wpdb->query(
+            $wpdb->prepare(
+                "INSERT INTO {$this->table_name} (day_date, logins, unique_logins)
+                 VALUES (%s, 0, 1)
+                 ON DUPLICATE KEY UPDATE unique_logins = unique_logins + 1",
+                $today
+            )
+        ); 
 
         // Track unique logins per user per day using user_meta
         $meta_key = '_cls_last_login_day';
